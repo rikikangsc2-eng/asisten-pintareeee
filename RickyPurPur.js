@@ -42,14 +42,14 @@ module.exports = sansekai = async (client, m, chatUpdate) => {
     const response = await axios.get("https://nue-api.vercel.app/alicia", {params: {text: m.body}});
 const {song_search, anime_search, character_search, google_search, chat_ai} = response.data;
 await m.reply(chat_ai.reply);
-await new Promise(resolve => setTimeout(resolve, 1000));
+await new Promise(resolve => setTimeout(resolve, 2000));
 
     //Plugin AI
 if (anime_search.status) {
   try {
     const animeResponse = await axios.get(`https://api.jikan.moe/v4/anime`, {params: {q: anime_search.query}});
     const animeData = animeResponse.data.data[0];
-    client.sendMessage(from, { 
+    await client.sendMessage(from, { 
       image: { url: animeData.images.jpg.large_image_url },
       caption: `Anime ditemukan: ${animeData.title}\nSinopsis: ${animeData.synopsis}\nRating: ${animeData.score}`
     });
@@ -57,11 +57,13 @@ if (anime_search.status) {
     console.error(error);
     m.reply("Ada yang salah saat mengirim informasi anime. gomenasai🙏🏻");
   }
-} else if (character_search.status) {
+  await new Promise(resolve => setTimeout(resolve, 2000));
+};
+  if (character_search.status) {
   try {
     const characterResponse = await axios.get(`https://api.jikan.moe/v4/characters`, {params: {q: character_search.query}});
     const characterData = characterResponse.data.data[0];
-    client.sendMessage(from, { 
+    await client.sendMessage(from, { 
       image: { url: characterData.images.jpg.image_url },
       caption: `Karakter ditemukan: ${characterData.name}\nTentang: ${characterData.about}`
     });
@@ -69,7 +71,9 @@ if (anime_search.status) {
     console.error(error);
     m.reply("Ada yang salah saat mengirim informasi karakter. gomenasai🙏🏻");
   }
-} else if (google_search.status) {
+    await new Promise(resolve => setTimeout(resolve, 2000));
+};
+  if (google_search.status) {
   try {
     m.reply("Bentar... aku cari di google!🔎")
     const googleResponse = await axios.get(`https://nue-api.vercel.app/api/bard`, {params: {text: google_search.query}});
@@ -78,16 +82,19 @@ if (anime_search.status) {
     console.error(error);
     m.reply("Ada yang salah saat mengirim hasil pencarian Google. gomenasai🙏🏻");
   }
-} else if (song_search.status) {
+    await new Promise(resolve => setTimeout(resolve, 2000));
+};
+  if (song_search.status) {
   try {
     const songResponse = await axios.get("https://nue-api.vercel.app/api/play", {params: {query: song_search.query}});
     m.reply(`Tunggu sebentar... sedang mengirim ${song_search.query}`);
-    client.sendMessage(from, { audio: {url: songResponse.data.download.audio}, mimetype: 'audio/mpeg'});
+    await client.sendMessage(from, { audio: {url: songResponse.data.download.audio}, mimetype: 'audio/mpeg'});
   } catch (error) {
     console.error(error);
     m.reply("Ada yang salah saat mengirim audio. gomenasai🙏🏻");
   }
-                   }
+    await new Promise(resolve => setTimeout(resolve, 2000));
+                   };
   
 
     // Group
