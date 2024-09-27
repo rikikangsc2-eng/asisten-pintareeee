@@ -42,7 +42,7 @@ module.exports = sansekai = async (client, m, chatUpdate) => {
 
     const response = await axios.get("https://nue-api.vercel.app/alicia", {params: {text: m.body}});
 const {song_search, anime_search, character_search, google_search, chat_ai} = response.data;
-m.reply(chat_ai.reply);
+await m.reply(chat_ai.reply);
 
 // Plugin anime search
 if (anime_search.status) {
@@ -78,9 +78,9 @@ else if (character_search.status) {
 // Plugin google search
 else if (google_search.status) {
   try {
-    const googleResponse = await axios.get(`https://nue-api.vercel.app/api/bard`, {params: {text: google_search.query}});
     m.reply("Bentar... aku cari di google!🔎")
-m.reply(`${googleResponse.data.result}`);
+    const googleResponse = await axios.get(`https://nue-api.vercel.app/api/bard`, {params: {text: google_search.query}});
+    m.reply(`${googleResponse.data.result}`);
   } catch (error) {
     console.error(error);
     m.reply("Ada yang salah saat mengirim hasil pencarian Google. gomenasai🙏🏻");
