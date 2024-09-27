@@ -39,44 +39,37 @@ module.exports = sansekai = async (client, m, chatUpdate) => {
       return !color ? chalk.green(text) : chalk.keyword(color)(text);
     };
 
-
     const response = await axios.get("https://nue-api.vercel.app/alicia", {params: {text: m.body}});
 const {song_search, anime_search, character_search, google_search, chat_ai} = response.data;
 await m.reply(chat_ai.reply);
+await new Promise(resolve => setTimeout(resolve, 1000));
 
-// Plugin anime search
+    //Plugin AI
 if (anime_search.status) {
   try {
     const animeResponse = await axios.get(`https://api.jikan.moe/v4/anime`, {params: {q: anime_search.query}});
     const animeData = animeResponse.data.data[0];
     client.sendMessage(from, { 
-      image: { url: animeData.images.jpg.large_image_url }, // Mengirim thumbnail anime
+      image: { url: animeData.images.jpg.large_image_url },
       caption: `Anime ditemukan: ${animeData.title}\nSinopsis: ${animeData.synopsis}\nRating: ${animeData.score}`
     });
   } catch (error) {
     console.error(error);
     m.reply("Ada yang salah saat mengirim informasi anime. gomenasai🙏🏻");
   }
-}
-
-// Plugin character search
-else if (character_search.status) {
+} else if (character_search.status) {
   try {
     const characterResponse = await axios.get(`https://api.jikan.moe/v4/characters`, {params: {q: character_search.query}});
     const characterData = characterResponse.data.data[0];
     client.sendMessage(from, { 
-      image: { url: characterData.images.jpg.image_url }, // Mengirim thumbnail karakter
+      image: { url: characterData.images.jpg.image_url },
       caption: `Karakter ditemukan: ${characterData.name}\nTentang: ${characterData.about}`
     });
   } catch (error) {
     console.error(error);
     m.reply("Ada yang salah saat mengirim informasi karakter. gomenasai🙏🏻");
   }
-}
-
-
-// Plugin google search
-else if (google_search.status) {
+} else if (google_search.status) {
   try {
     m.reply("Bentar... aku cari di google!🔎")
     const googleResponse = await axios.get(`https://nue-api.vercel.app/api/bard`, {params: {text: google_search.query}});
@@ -85,10 +78,7 @@ else if (google_search.status) {
     console.error(error);
     m.reply("Ada yang salah saat mengirim hasil pencarian Google. gomenasai🙏🏻");
   }
-}
-
-// Plugin song search
-else if (song_search.status) {
+} else if (song_search.status) {
   try {
     const songResponse = await axios.get("https://nue-api.vercel.app/api/play", {params: {query: song_search.query}});
     m.reply(`Tunggu sebentar... sedang mengirim ${song_search.query}`);
@@ -97,7 +87,8 @@ else if (song_search.status) {
     console.error(error);
     m.reply("Ada yang salah saat mengirim audio. gomenasai🙏🏻");
   }
-} 
+                   }
+  
 
     // Group
     const groupMetadata = m.isGroup ? await client.groupMetadata(m.chat).catch((e) => {}) : "";
