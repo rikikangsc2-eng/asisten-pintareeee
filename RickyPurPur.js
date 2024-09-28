@@ -76,8 +76,8 @@ if (anime_search.status) {
   if (google_search.status) {
   try {
     m.reply("*Memanggil Model Gemini 1.5 flash...*")
-    const googleResponse = await axios.get(`https://nue-api.vercel.app/api/bard`, {params: {text: google_search.query}});
-    m.reply(`${googleResponse.data.result}`);
+    const googleResponse = await axios.get(`https://nue-api.vercel.app/api/gemini`, {params: {prompt: google_search.query}});
+    m.reply(`${googleResponse.data.message}`);
   } catch (error) {
     console.error(error);
     m.reply("Ada yang salah saat memanggil Gemini AI. gomenasai🙏🏻");
