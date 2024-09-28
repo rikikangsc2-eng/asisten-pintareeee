@@ -45,28 +45,30 @@ await m.reply(chat_ai.reply);
 await new Promise(resolve => setTimeout(resolve, 2000));
 
     //Plugin AI
-
   if (anime_search.status) {
   try {
-    const animeResponse = await axios.get(`https://api.jikan.moe/v4/anime`, {params: {q: anime_search.query}});
+    const animeResponse = await axios.get(`https://api.jikan.moe/v4/anime`, { params: { q: anime_search.query } });
     const animeData = animeResponse.data.data[0];
-    let translatedSynopsis = animeData.synopsis; // Deklarasikan variabel di luar block if
-    if (animeData) {
-      const translationResponse = await axios.post('https://translate-serverless.vercel.app/api/translate', {
+
+    if (animeData && animeData.synopsis) {
+      const translateResponse = await axios.post('https://translate-serverless.vercel.app/api/translate', {
         message: animeData.synopsis,
-        from: "en",
-        to: "id"
-      }, {
-        headers: { 'content-type': 'application/json' }
+        from: 'en',
+        to: 'id',
       });
-      translatedSynopsis = translationResponse.data.translatedText; // Berikan nilai di dalam block if
+
+      const translatedText = translateResponse.data.trans_result.dst;
+
+      await client.sendMessage(from, { 
+        image: { url: animeData.images.jpg.large_image_url },
+        caption: `Anime ditemukan: ${animeData.title}\nSinopsis: ${translatedText}\nRating: ${animeData.score}`
+      });
     } else {
-      m.reply("Anime tidak ditemukan.");
+      await client.sendMessage(from, { 
+        image: { url: animeData.images.jpg.large_image_url },
+        caption: `Anime ditemukan: ${animeData.title}\nRating: ${animeData.score}`
+      });
     }
-    await client.sendMessage(from, { 
-      image: { url: animeData.images.jpg.large_image_url },
-      caption: `Anime ditemukan: ${animeData.title}\nSinopsis: ${translatedSynopsis}\nRating: ${animeData.score}`
-    });
   } catch (error) {
     console.error(error);
     m.reply("Ada yang salah saat mengirim informasi anime. gomenasai🙏🏻");
@@ -76,31 +78,34 @@ await new Promise(resolve => setTimeout(resolve, 2000));
 
 if (character_search.status) {
   try {
-    const characterResponse = await axios.get(`https://api.jikan.moe/v4/characters`, {params: {q: character_search.query}});
+    const characterResponse = await axios.get(`https://api.jikan.moe/v4/characters`, { params: { q: character_search.query } });
     const characterData = characterResponse.data.data[0];
-    let translatedAbout = characterData.about; // Deklarasikan variabel di luar block if
-    if (characterData) {
-      const translationResponse = await axios.post('https://translate-serverless.vercel.app/api/translate', {
+
+    if (characterData && characterData.about) {
+      const translateResponse = await axios.post('https://translate-serverless.vercel.app/api/translate', {
         message: characterData.about,
-        from: "en",
-        to: "id"
-      }, {
-        headers: { 'content-type': 'application/json' }
+        from: 'en',
+        to: 'id',
       });
-      translatedAbout = translationResponse.data.translatedText; // Berikan nilai di dalam block if
+
+      const translatedText = translateResponse.data.trans_result.dst;
+
+      await client.sendMessage(from, { 
+        image: { url: characterData.images.jpg.image_url },
+        caption: `Karakter ditemukan: ${characterData.name}\nTentang: ${translatedText}`
+      });
     } else {
-      m.reply("Karakter tidak ditemukan.");
+      await client.sendMessage(from, { 
+        image: { url: characterData.images.jpg.image_url },
+        caption: `Karakter ditemukan: ${characterData.name}`
+      });
     }
-    await client.sendMessage(from, { 
-      image: { url: characterData.images.jpg.image_url },
-      caption: `Karakter ditemukan: ${characterData.name}\nTentang: ${translatedAbout}`
-    });
   } catch (error) {
     console.error(error);
     m.reply("Ada yang salah saat mengirim informasi karakter. gomenasai🙏🏻");
   }
   await new Promise(resolve => setTimeout(resolve, 2000));
-        };
+};
   if (google_search.status) {
   try {
     m.reply("Bentar... aku cari di google!🔎")
