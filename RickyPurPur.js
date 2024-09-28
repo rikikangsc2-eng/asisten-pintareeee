@@ -75,12 +75,12 @@ if (anime_search.status) {
 };
   if (google_search.status) {
   try {
-    m.reply("Bentar... aku cari di google!🔎")
+    m.reply("*Memanggil Model Gemini 1.5 flash...*")
     const googleResponse = await axios.get(`https://nue-api.vercel.app/api/bard`, {params: {text: google_search.query}});
     m.reply(`${googleResponse.data.result}`);
   } catch (error) {
     console.error(error);
-    m.reply("Ada yang salah saat mengirim hasil pencarian Google. gomenasai🙏🏻");
+    m.reply("Ada yang salah saat memanggil Gemini AI. gomenasai🙏🏻");
   }
     await new Promise(resolve => setTimeout(resolve, 2000));
 };
