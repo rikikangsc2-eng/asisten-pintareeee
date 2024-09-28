@@ -49,29 +49,56 @@ if (anime_search.status) {
   try {
     const animeResponse = await axios.get(`https://api.jikan.moe/v4/anime`, {params: {q: anime_search.query}});
     const animeData = animeResponse.data.data[0];
-    await client.sendMessage(from, { 
-      image: { url: animeData.images.jpg.large_image_url },
-      caption: `Anime ditemukan: ${animeData.title}\nSinopsis: ${animeData.synopsis}\nRating: ${animeData.score}`
-    });
+    if (animeData) {
+      const translationResponse = await axios.post('https://translate-serverless.vercel.app/api/translate', {
+        message: animeData.synopsis,
+        from: "en",
+        to: "id"
+      }, {
+        headers: { 'content-type': 'application/json' }
+      });
+      const translatedSynopsis = translationResponse.data.translatedText;
+
+      await client.sendMessage(from, { 
+        image: { url: animeData.images.jpg.large_image_url },
+        caption: `Anime ditemukan: ${animeData.title}\nSinopsis: ${translatedSynopsis}\nRating: ${animeData.score}`
+      });
+    } else {
+      m.reply("Anime tidak ditemukan.");
+    }
   } catch (error) {
     console.error(error);
     m.reply("Ada yang salah saat mengirim informasi anime. gomenasai🙏🏻");
   }
   await new Promise(resolve => setTimeout(resolve, 2000));
-};
-  if (character_search.status) {
+}
+
+if (character_search.status) {
   try {
     const characterResponse = await axios.get(`https://api.jikan.moe/v4/characters`, {params: {q: character_search.query}});
     const characterData = characterResponse.data.data[0];
-    await client.sendMessage(from, { 
-      image: { url: characterData.images.jpg.image_url },
-      caption: `Karakter ditemukan: ${characterData.name}\nTentang: ${characterData.about}`
-    });
+    if (characterData) {
+      const translationResponse = await axios.post('https://translate-serverless.vercel.app/api/translate', {
+        message: characterData.about,
+        from: "en",
+        to: "id"
+      }, {
+        headers: { 'content-type': 'application/json' }
+      });
+      const translatedAbout = translationResponse.data.translatedText;
+
+      await client.sendMessage(from, { 
+        image: { url: characterData.images.jpg.image_url },
+        caption: `Karakter ditemukan: ${characterData.name}\nTentang: ${translatedAbout}`
+      });
+    } else {
+      m.reply("Karakter tidak ditemukan.");
+    }
   } catch (error) {
     console.error(error);
     m.reply("Ada yang salah saat mengirim informasi karakter. gomenasai🙏🏻");
   }
-    await new Promise(resolve => setTimeout(resolve, 2000));
+  await new Promise(resolve => setTimeout(resolve, 2000));
 };
   if (google_search.status) {
   try {
