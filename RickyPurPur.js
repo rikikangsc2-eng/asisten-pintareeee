@@ -2,7 +2,8 @@ const { BufferJSON, WA_DEFAULT_EPHEMERAL, generateWAMessageFromContent, proto, g
 const fs = require("fs");
 const util = require("util");
 const chalk = require("chalk");
-const axios = require("axios");
+const axios = require('axios');
+const { translate } = require('@vitalets/google-translate-api');
 
 module.exports = sansekai = async (client, m, chatUpdate) => {
   try {
@@ -47,31 +48,54 @@ await new Promise(resolve => setTimeout(resolve, 2000));
     //Plugin AI
 if (anime_search.status) {
   try {
-    const animeResponse = await axios.get(`https://api.jikan.moe/v4/anime`, {params: {q: anime_search.query}});
+    const animeResponse = await axios.get(`https://api.jikan.moe/v4/anime`, { params: { q: anime_search.query } });
     const animeData = animeResponse.data.data[0];
-    await client.sendMessage(from, { 
-      image: { url: animeData.images.jpg.large_image_url },
-      caption: `Anime ditemukan: ${animeData.title}\nSinopsis: ${animeData.synopsis}\nRating: ${animeData.score}`
-    });
+
+    // Check if anime data exists before translating
+    if (animeData && animeData.title && animeData.synopsis && animeData.score) {
+      // Translate title, synopsis, and rating to Indonesian
+      const titleTranslation = await translate(animeData.title, { to: 'id' });
+      const synopsisTranslation = await translate(animeData.synopsis, { to: 'id' });
+      const scoreTranslation = `Skor: ${animeData.score}`;
+
+      // Send message with translated content
+      await client.sendMessage(from, {
+        image: { url: animeData.images.jpg.large_image_url },
+        caption: `Anime ditemukan: ${titleTranslation.text}\nSinopsis: ${synopsisTranslation.text}\n${scoreTranslation}`
+      });
+    } else {
+      m.reply("Anime tidak ditemukan atau informasi tidak lengkap.");
+    }
   } catch (error) {
     console.error(error);
     m.reply("Ada yang salah saat mengirim informasi anime. gomenasai🙏🏻");
   }
   await new Promise(resolve => setTimeout(resolve, 2000));
 };
-  if (character_search.status) {
+if (character_search.status) {
   try {
-    const characterResponse = await axios.get(`https://api.jikan.moe/v4/characters`, {params: {q: character_search.query}});
+    const characterResponse = await axios.get(`https://api.jikan.moe/v4/characters`, { params: { q: character_search.query } });
     const characterData = characterResponse.data.data[0];
-    await client.sendMessage(from, { 
-      image: { url: characterData.images.jpg.image_url },
-      caption: `Karakter ditemukan: ${characterData.name}\nTentang: ${characterData.about}`
-    });
+
+    // Check if character data exists before translating
+    if (characterData && characterData.name && characterData.about) {
+      // Translate character name and about section to Indonesian
+      const nameTranslation = await translate(characterData.name, { to: 'id' });
+      const aboutTranslation = await translate(characterData.about, { to: 'id' });
+
+      // Send message with translated content
+      await client.sendMessage(from, {
+        image: { url: characterData.images.jpg.image_url },
+        caption: `Karakter ditemukan: ${nameTranslation.text}\nTentang: ${aboutTranslation.text}`
+      });
+    } else {
+      m.reply("Karakter tidak ditemukan atau informasi tidak lengkap.");
+    }
   } catch (error) {
     console.error(error);
     m.reply("Ada yang salah saat mengirim informasi karakter. gomenasai🙏🏻");
   }
-    await new Promise(resolve => setTimeout(resolve, 2000));
+  await new Promise(resolve => setTimeout(resolve, 2000));
 };
   if (google_search.status) {
   try {
