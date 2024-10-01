@@ -90,10 +90,9 @@ if (character_search.status) {
 
 if (google_search.status) {
   try {
-    m.reply("*Memanggil Model Gemini 1.5 flash...*")
+    m.reply("*Memanggil Model Gemini 1.5 flash...*");
     const googleResponse = await axios.get(`https://nue-api.vercel.app/api/gemini`, { params: { prompt: google_search.query } });
-    const googleTranslation = await translate(googleResponse.data.message, { to: 'id' });
-    m.reply(`${googleTranslation.text}`);
+    m.reply(`${googleResponse.data.message}`);
   } catch (error) {
     console.error(error);
     m.reply("Ada yang salah saat memanggil Gemini AI. gomenasai🙏🏻");
