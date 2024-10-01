@@ -46,80 +46,71 @@ await m.reply(chat_ai.reply);
 await new Promise(resolve => setTimeout(resolve, 2000));
 
     //Plugin AI
-if (anime_search.status) {
+
+  if (anime_search.status) {
   try {
     const animeResponse = await axios.get(`https://api.jikan.moe/v4/anime`, { params: { q: anime_search.query } });
     const animeData = animeResponse.data.data[0];
-
-    // Check if anime data exists before translating
-    if (animeData && animeData.title && animeData.synopsis && animeData.score) {
-      // Translate title, synopsis, and rating to Indonesian
-      const titleTranslation = await translate(animeData.title, { to: 'id' });
-      const synopsisTranslation = await translate(animeData.synopsis, { to: 'id' });
-      const scoreTranslation = `Skor: ${animeData.score}`;
-
-      // Send message with translated content
+    if (animeData && animeData.title) {
+      const title = animeData.title;
+      const synopsisTranslation = animeData.synopsis ? await translate(animeData.synopsis, { to: 'id' }) : { text: "Tidak ditemukan" };
+      const scoreTranslation = animeData.score ? `Skor: ${animeData.score}` : "Skor: Tidak ditemukan";
       await client.sendMessage(from, {
-        image: { url: animeData.images.jpg.large_image_url },
-        caption: `Anime ditemukan: ${titleTranslation.text}\nSinopsis: ${synopsisTranslation.text}\n${scoreTranslation}`
+        image: { url: animeData.images?.jpg?.large_image_url || '' },
+        caption: `Anime ditemukan: ${title}\nSinopsis: ${synopsisTranslation.text}\n${scoreTranslation}`
       });
     } else {
-      m.reply("Anime tidak ditemukan atau informasi tidak lengkap.");
+      m.reply("Anime tidak ditemukan.");
     }
   } catch (error) {
     console.error(error);
     m.reply("Ada yang salah saat mengirim informasi anime. gomenasai🙏🏻");
   }
-  await new Promise(resolve => setTimeout(resolve, 2000));
 };
+
 if (character_search.status) {
   try {
     const characterResponse = await axios.get(`https://api.jikan.moe/v4/characters`, { params: { q: character_search.query } });
     const characterData = characterResponse.data.data[0];
-
-    // Check if character data exists before translating
-    if (characterData && characterData.name && characterData.about) {
-      // Translate character name and about section to Indonesian
-      const nameTranslation = await translate(characterData.name, { to: 'id' });
-      const aboutTranslation = await translate(characterData.about, { to: 'id' });
-
-      // Send message with translated content
+    if (characterData && characterData.name) {
+      const name = characterData.name;
+      const aboutTranslation = characterData.about ? await translate(characterData.about, { to: 'id' }) : { text: "Tidak ditemukan" };
       await client.sendMessage(from, {
-        image: { url: characterData.images.jpg.image_url },
-        caption: `Karakter ditemukan: ${nameTranslation.text}\nTentang: ${aboutTranslation.text}`
+        image: { url: characterData.images?.jpg?.image_url || '' },
+        caption: `Karakter ditemukan: ${name}\nTentang: ${aboutTranslation.text}`
       });
     } else {
-      m.reply("Karakter tidak ditemukan atau informasi tidak lengkap.");
+      m.reply("Karakter tidak ditemukan.");
     }
   } catch (error) {
     console.error(error);
     m.reply("Ada yang salah saat mengirim informasi karakter. gomenasai🙏🏻");
   }
-  await new Promise(resolve => setTimeout(resolve, 2000));
 };
-  if (google_search.status) {
+
+if (google_search.status) {
   try {
     m.reply("*Memanggil Model Gemini 1.5 flash...*")
-    const googleResponse = await axios.get(`https://nue-api.vercel.app/api/gemini`, {params: {prompt: google_search.query}});
-    m.reply(`${googleResponse.data.message}`);
+    const googleResponse = await axios.get(`https://nue-api.vercel.app/api/gemini`, { params: { prompt: google_search.query } });
+    const googleTranslation = await translate(googleResponse.data.message, { to: 'id' });
+    m.reply(`${googleTranslation.text}`);
   } catch (error) {
     console.error(error);
     m.reply("Ada yang salah saat memanggil Gemini AI. gomenasai🙏🏻");
   }
-    await new Promise(resolve => setTimeout(resolve, 2000));
 };
-  if (song_search.status) {
+
+if (song_search.status) {
   try {
-    const songResponse = await axios.get("https://nue-api.vercel.app/api/play", {params: {query: song_search.query}});
+    const songResponse = await axios.get("https://nue-api.vercel.app/api/play", { params: { query: song_search.query } });
     m.reply(`Tunggu sebentar... sedang mengirim ${song_search.query}`);
-    await client.sendMessage(from, { audio: {url: songResponse.data.download.audio}, mimetype: 'audio/mpeg'});
+    await client.sendMessage(from, { audio: { url: songResponse.data.download.audio }, mimetype: 'audio/mpeg' });
   } catch (error) {
     console.error(error);
     m.reply("Ada yang salah saat mengirim audio. gomenasai🙏🏻");
   }
-    await new Promise(resolve => setTimeout(resolve, 2000));
-                   };
-  
+};
+      
 
     // Group
     const groupMetadata = m.isGroup ? await client.groupMetadata(m.chat).catch((e) => {}) : "";
