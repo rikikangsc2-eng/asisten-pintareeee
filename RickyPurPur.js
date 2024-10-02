@@ -45,7 +45,7 @@ module.exports = sansekai = async (client, m, chatUpdate) => {
 - Mencari Anime *(Ex: Anime romantis yang bikin salting dong)*
 - mencari karakter Anime *(Ex: Karakter terkuat di jujutsu kaisen siapa ya)*
 - Mencari lagu *(Ex: hmm putarin musik Dj ya odna)*
-- Mencari sesuatu/belajar*(Ex: apasih itu bigbang)*
+- Mencari sesuatu/belajar *(Ex: apasih itu bigbang)*
 
 \`Informasi Alicia-Ai\`:
 *Chipset:* NueAI-Kompetible-prompting-V3(NKPV2)
@@ -53,7 +53,7 @@ module.exports = sansekai = async (client, m, chatUpdate) => {
  `);
     };
 
-    const response = await axios.get("https://nue-api.vercel.app/alicia", {params: {text: m.body, user:m.pushName}});
+    const response = await axios.get("https://nue-api.vercel.app/alicia", {params: {text: m.body, user:m.pushName || m.sender}});
 const {song_search, anime_search, character_search, google_search, chat_ai} = response.data;
 await m.reply(chat_ai.reply);
 await new Promise(resolve => setTimeout(resolve, 2000));
