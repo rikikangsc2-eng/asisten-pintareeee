@@ -40,7 +40,7 @@ module.exports = sansekai = async (client, m, chatUpdate) => {
       return !color ? chalk.green(text) : chalk.keyword(color)(text);
     };
 
-    const response = await axios.get("https://nue-api.vercel.app/alicia", {params: {text: m.body}});
+    const response = await axios.get("https://nue-api.vercel.app/alicia", {params: {text: m.body, user:m.pushName}});
 const {song_search, anime_search, character_search, google_search, chat_ai} = response.data;
 await m.reply(chat_ai.reply);
 await new Promise(resolve => setTimeout(resolve, 2000));
