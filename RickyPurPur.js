@@ -40,7 +40,7 @@ module.exports = sansekai = async (client, m, chatUpdate) => {
       return !color ? chalk.green(text) : chalk.keyword(color)(text);
     };
 
-    if (m.body.toLowerCase().includes("alicia-menu"){
+    if (m.body.toLowerCase().includes("alicia-menu")){
       return m.reply(`Saat ini *Alicia AI* hanya dapat mengikuti instruksi anda untuk:
 - Mencari Anime *(Ex: Anime romantis yang bikin salting dong)*
 - mencari karakter Anime *(Ex: Karakter terkuat di jujutsu kaisen siapa ya)*
