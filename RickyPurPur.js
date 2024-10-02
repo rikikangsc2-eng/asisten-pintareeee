@@ -40,6 +40,19 @@ module.exports = sansekai = async (client, m, chatUpdate) => {
       return !color ? chalk.green(text) : chalk.keyword(color)(text);
     };
 
+    if (m.body.includes("alicia-menu"){
+      return m.reply(`Saat ini *Alicia AI* hanya dapat mengikuti instruksi anda untuk:
+- Mencari Anime *(Ex: Anime romantis yang bikin salting dong)*
+- mencari karakter Anime *(Ex: Karakter terkuat di jujutsu kaisen siapa ya)*
+- Mencari lagu *(Ex: hmm putarin musik Dj ya odna)*
+- Mencari sesuatu/belajar*(Ex: apasih itu bigbang)*
+
+\`Informasi Alicia-Ai\`:
+*Chipset:* NueAI-Kompetible-prompting-V3(NKPV2)
+*Os:* Linux
+ `);
+    };
+
     const response = await axios.get("https://nue-api.vercel.app/alicia", {params: {text: m.body, user:m.pushName}});
 const {song_search, anime_search, character_search, google_search, chat_ai} = response.data;
 await m.reply(chat_ai.reply);
